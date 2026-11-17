@@ -1,0 +1,124 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Requests — LifeLink{% endblock %}
+
+{% block content %}
+
+<section class="my-requests-page">
+
+    <div class="my-requests-heading">
+        <div>
+            <span class="eyebrow">YOUR ACTIVITY</span>
+            <h1>My Blood Requests</h1>
+            <p>Keep track of your requests and their progress.</p>
+        </div>
+
+        <a href="{{ url_for('request_blood') }}" class="button">
+            + New Request
+        </a>
+    </div>
+
+    {% if blood_requests %}
+
+        <div class="my-requests-list">
+
+            {% for blood_request in blood_requests %}
+
+            <article class="my-request-card">
+
+                <div class="my-request-top">
+
+                    <div>
+                        <span class="eyebrow">BLOOD REQUEST</span>
+                        <h3>{{ blood_request.patient_name }}</h3>
+                    </div>
+
+                    {% if blood_request.status == "Completed" %}
+                        <span class="request-status status-completed">✓ Completed</span>
+                    {% elif blood_request.status == "Cancelled" %}
+                        <span class="request-status status-cancelled">Cancelled</span>
+                    {% elif blood_request.status == "Expired" %}
+                        <span class="request-status status-expired">Expired</span>
+                    {% elif blood_request.status == "Accepted" %}
+                        <span class="request-status status-accepted">Accepted</span>
+                    {% else %}
+                        <span class="request-status status-pending">{{ blood_request.status }}</span>
+                    {% endif %}
+
+                </div>
+
+                <div class="my-request-details">
+
+                    <div>
+                        <span>Blood group</span>
+                        <strong class="request-blood">{{ blood_request.blood_group }}</strong>
+                    </div>
+
+                    <div>
+                        <span>City</span>
+                        <strong>{{ blood_request.city }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Hospital</span>
+                        <strong>{{ blood_request.hospital_name }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Units required</span>
+                        <strong>{{ blood_request.units_required }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Urgency</span>
+                        <strong>{{ blood_request.urgency }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Date submitted</span>
+                        <strong>{{ blood_request.created_at.strftime('%d %B %Y, %I:%M %p') }}</strong>
+                    </div>
+
+                </div>
+
+                {% if blood_request.status not in ["Completed", "Cancelled", "Expired"] %}
+
+                <div class="my-request-actions">
+
+                    <form method="POST"
+                          action="{{ url_for('cancel_request', request_id=blood_request.id) }}"
+                          onsubmit="return confirm('Are you sure you want to cancel this request?');">
+
+                        <button type="submit" class="button button-outline cancel-button">
+                            Cancel Request
+                        </button>
+
+                    </form>
+
+                </div>
+
+                {% endif %}
+
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="my-requests-empty">
+            <div>♡</div>
+            <h2>No requests yet</h2>
+            <p>Your submitted blood requests will appear here.</p>
+            <a href="{{ url_for('request_blood') }}" class="button">
+                Create your first request →
+            </a>
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

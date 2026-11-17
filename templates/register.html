@@ -1,0 +1,122 @@
+
+{% extends "base.html" %}
+{% block title %}Join LifeLink — Create Account{% endblock %}
+
+{% block content %}
+
+<section class="form-shell register-shell">
+
+    <div class="register-heading">
+        <div class="register-heart">♥</div>
+        <p class="eyebrow">BE PART OF SOMETHING MEANINGFUL</p>
+        <h1>Create your account</h1>
+        <p class="register-subtitle">
+            Join a community that connects people through the gift of blood donation.
+        </p>
+    </div>
+
+    <form method="post" class="form-card register-card">
+
+        <div class="form-section-title">
+            <span>01</span>
+            <h3>Personal information</h3>
+        </div>
+
+        <label>
+            Full name
+            <input name="full_name" required maxlength="120"
+                   autocomplete="name" placeholder="Enter your full name">
+        </label>
+
+        <label>
+            Email address
+            <input type="email" name="email" required
+                   autocomplete="email" placeholder="you@example.com">
+        </label>
+
+        <label>
+            Password
+            <input type="password" name="password" required minlength="8"
+                   autocomplete="new-password" placeholder="Create a password">
+            <small>Use at least 8 characters.</small>
+        </label>
+
+        <div class="form-divider"></div>
+
+        <div class="form-section-title">
+            <span>02</span>
+            <h3>Choose your account</h3>
+        </div>
+
+        <label>
+            Account type
+            <select name="role" id="role" onchange="toggleDonorFields()">
+                <option value="donor">Blood donor</option>
+                <option value="requester">Blood requester</option>
+            </select>
+        </label>
+
+        <div id="donor-fields">
+
+            <div class="form-divider"></div>
+
+            <div class="form-section-title">
+                <span>03</span>
+                <h3>Donor information</h3>
+            </div>
+
+            <label>
+                Blood group
+                <select name="blood_group">
+                    <option value="">Select blood group</option>
+                    {% for group in blood_groups %}
+                    <option value="{{ group }}">{{ group }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label>
+                City
+                <input name="city" maxlength="100"
+                       placeholder="e.g. Bengaluru">
+            </label>
+
+            <label>
+                Phone number
+                <input name="phone" type="tel" maxlength="30"
+                       placeholder="Your contact number">
+            </label>
+
+            <label class="check register-consent">
+                <input type="checkbox" name="consent_to_contact">
+                <span>
+                    I consent to my phone number being shared with people
+                    who have a relevant blood request.
+                </span>
+            </label>
+
+        </div>
+
+        <button class="button register-submit" type="submit">
+            Create account →
+        </button>
+
+        <p class="register-login">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Log in</a>
+        </p>
+
+    </form>
+
+</section>
+
+<script>
+function toggleDonorFields() {
+    const isDonor = document.getElementById('role').value === 'donor';
+    document.getElementById('donor-fields').hidden = !isDonor;
+}
+
+toggleDonorFields();
+</script>
+
+{% endblock %}

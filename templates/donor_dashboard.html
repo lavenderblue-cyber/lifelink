@@ -1,0 +1,271 @@
+
+{% extends "base.html" %}
+
+{% block title %}Donor Dashboard — LifeLink{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-page">
+
+    <div class="dashboard-heading">
+        <div>
+            <span class="eyebrow">YOUR LIFELINK SPACE</span>
+            <h1>Donor Dashboard</h1>
+            <p>Every act of kindness makes a difference.</p>
+        </div>
+        <div class="dashboard-heart">♥</div>
+    </div>
+
+    <!-- DONOR PROFILE -->
+
+    <section class="profile-card">
+
+        <div class="profile-top">
+            <div>
+                <span class="eyebrow">YOUR PROFILE</span>
+                <h2>{{ donor_profile.blood_group }} Donor</h2>
+                <p>{{ donor_profile.city }}</p>
+            </div>
+
+            <span class="blood-badge">{{ donor_profile.blood_group }}</span>
+        </div>
+
+        <div class="profile-details">
+
+            <div>
+                <span>FULL NAME</span>
+                <strong>{{ current_user.full_name }}</strong>
+            </div>
+
+            <div>
+                <span>CITY</span>
+                <strong>{{ donor_profile.city }}</strong>
+            </div>
+
+            <div>
+                <span>PHONE</span>
+                <strong>{{ donor_profile.phone }}</strong>
+            </div>
+
+            <div>
+                <span>AVAILABILITY</span>
+                {% if donor_profile.is_available %}
+                    <strong class="availability-available">● Available</strong>
+                {% else %}
+                    <strong class="availability-unavailable">● Unavailable</strong>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <form method="POST" action="{{ url_for('toggle_availability') }}">
+            {% if donor_profile.is_available %}
+                <button type="submit" class="button button-outline">
+                    Mark as Unavailable
+                </button>
+            {% else %}
+                <button type="submit" class="button button-blue">
+                    Mark as Available
+                </button>
+            {% endif %}
+        </form>
+
+    </section>
+
+
+    <!-- INCOMING REQUESTS -->
+
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-heading">
+            <div>
+                <span class="eyebrow">RESPOND TO REQUESTS</span>
+                <h2>Incoming Requests</h2>
+            </div>
+            <span class="section-symbol">↗</span>
+        </div>
+
+        {% if not donor_profile.is_available %}
+
+            <div class="dashboard-empty">
+                <span>♡</span>
+                <h3>You're currently unavailable</h3>
+                <p>Update your availability to receive matching blood requests.</p>
+            </div>
+
+        {% elif blood_requests %}
+
+            <div class="dashboard-grid">
+
+                {% for blood_request in blood_requests %}
+
+                <article class="request-card dashboard-request">
+
+                    <div class="request-card-top">
+                        <span class="blood-badge">{{ blood_request.blood_group }}</span>
+                        <span class="urgency-label">{{ blood_request.urgency }}</span>
+                    </div>
+
+                    <h3>{{ blood_request.patient_name }}</h3>
+
+                    <div class="request-details">
+                        <p><span>Hospital</span><strong>{{ blood_request.hospital_name }}</strong></p>
+                        <p><span>City</span><strong>{{ blood_request.city }}</strong></p>
+                        <p><span>Units required</span><strong>{{ blood_request.units_required }}</strong></p>
+                        <p><span>Status</span><strong>{{ blood_request.status }}</strong></p>
+                    </div>
+
+                    <div class="request-actions">
+
+                        <form method="POST"
+                              action="{{ url_for('respond_to_request', request_id=blood_request.id, action='accept') }}">
+                            <button type="submit" class="button">
+                                Accept Request
+                            </button>
+                        </form>
+
+                        <form method="POST"
+                              action="{{ url_for('respond_to_request', request_id=blood_request.id, action='decline') }}">
+                            <button type="submit" class="button button-outline">
+                                Decline
+                            </button>
+                        </form>
+
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="dashboard-empty">
+                <span>♡</span>
+                <h3>No new matching requests</h3>
+                <p>There are no incoming requests at the moment. Check back later.</p>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- ACCEPTED REQUESTS -->
+
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-heading">
+            <div>
+                <span class="eyebrow">YOUR COMMITMENTS</span>
+                <h2>Accepted Requests</h2>
+            </div>
+            <span class="section-symbol blue-symbol">✓</span>
+        </div>
+
+        {% if accepted_requests %}
+
+            <div class="dashboard-grid">
+
+                {% for blood_request in accepted_requests %}
+
+                <article class="request-card dashboard-request">
+
+                    <div class="request-card-top">
+                        <span class="blood-badge">{{ blood_request.blood_group }}</span>
+                        <span class="status-accepted">{{ blood_request.status }}</span>
+                    </div>
+
+                    <h3>{{ blood_request.patient_name }}</h3>
+
+                    <div class="request-details">
+                        <p><span>Hospital</span><strong>{{ blood_request.hospital_name }}</strong></p>
+                        <p><span>City</span><strong>{{ blood_request.city }}</strong></p>
+                        <p><span>Blood group</span><strong>{{ blood_request.blood_group }}</strong></p>
+                    </div>
+
+                    <form method="POST"
+                          action="{{ url_for('complete_donation', request_id=blood_request.id) }}"
+                          onsubmit="return confirm('Mark this donation as completed?');">
+
+                        <button type="submit" class="button button-blue complete-button">
+                            Mark as Completed ✓
+                        </button>
+
+                    </form>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="dashboard-empty">
+                <span>✓</span>
+                <h3>No accepted requests yet</h3>
+                <p>Requests you accept will appear here.</p>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- DONATION HISTORY -->
+
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-heading">
+            <div>
+                <span class="eyebrow">YOUR CONTRIBUTION</span>
+                <h2>Donation History</h2>
+            </div>
+            <span class="section-symbol">♥</span>
+        </div>
+
+        {% if completed_donations %}
+
+            <div class="history-list">
+
+                {% for donation in completed_donations %}
+
+                <article class="history-card">
+
+                    <div class="history-check">✓</div>
+
+                    <div class="history-info">
+                        <h3>{{ donation.patient_name }}</h3>
+                        <p>{{ donation.hospital_name }} · {{ donation.city }}</p>
+                        <small>{{ donation.created_at.strftime('%d %B %Y') }}</small>
+                    </div>
+
+                    <div class="history-meta">
+                        <span class="blood-badge">{{ donation.blood_group }}</span>
+                        <small>{{ donation.units_required }} unit(s)</small>
+                        <strong>Completed</strong>
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="dashboard-empty">
+                <span>♥</span>
+                <h3>Your journey starts here</h3>
+                <p>Your completed donations will be recorded here.</p>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</section>
+
+{% endblock %}

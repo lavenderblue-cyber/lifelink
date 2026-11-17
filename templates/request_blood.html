@@ -1,0 +1,102 @@
+
+{% extends "base.html" %}
+
+{% block title %}Request Blood — LifeLink{% endblock %}
+
+{% block content %}
+
+<section class="form-shell request-shell">
+
+    <div class="request-heading">
+        <div class="request-icon">+</div>
+        <p class="eyebrow">WE'RE HERE TO HELP</p>
+        <h1>Request <span>blood.</span></h1>
+        <p class="request-subtitle">
+            Provide the details below to connect with compatible registered donors.
+        </p>
+    </div>
+
+    <form method="POST"
+          action="{{ url_for('request_blood') }}"
+          class="form-card request-card">
+
+        <div class="form-section-title">
+            <span>01</span>
+            <h3>Patient information</h3>
+        </div>
+
+        <label for="patient_name">
+            Patient name
+            <input type="text" id="patient_name" name="patient_name"
+                   placeholder="Enter patient's name" required>
+        </label>
+
+        <label for="blood_group">
+            Required blood group
+            <select id="blood_group" name="blood_group" required>
+                <option value="">Select blood group</option>
+                {% for group in blood_groups %}
+                <option value="{{ group }}">{{ group }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <div class="form-divider"></div>
+
+        <div class="form-section-title">
+            <span>02</span>
+            <h3>Hospital details</h3>
+        </div>
+
+        <label for="city">
+            City
+            <input type="text" id="city" name="city"
+                   placeholder="Enter city" required>
+        </label>
+
+        <label for="hospital_name">
+            Hospital name
+            <input type="text" id="hospital_name" name="hospital_name"
+                   placeholder="Enter hospital name" required>
+        </label>
+
+        <div class="form-divider"></div>
+
+        <div class="form-section-title">
+            <span>03</span>
+            <h3>Request details</h3>
+        </div>
+
+        <label for="units_required">
+            Units required
+            <input type="number" id="units_required" name="units_required"
+                   min="1" max="20" value="1" required>
+        </label>
+
+        <label for="urgency">
+            Urgency level
+            <select id="urgency" name="urgency" required>
+                <option value="Normal">Normal</option>
+                <option value="Urgent">Urgent</option>
+                <option value="Critical">Critical</option>
+            </select>
+        </label>
+
+        <div class="request-notice">
+            <span>♥</span>
+            <p>
+                LifeLink helps connect requesters with registered donors.
+                Please contact a hospital or blood bank for immediate
+                medical assistance.
+            </p>
+        </div>
+
+        <button type="submit" class="button request-submit">
+            Submit blood request →
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

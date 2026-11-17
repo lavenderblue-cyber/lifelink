@@ -1,0 +1,117 @@
+
+{% extends "base.html" %}
+
+{% block title %}Find Donors — LifeLink{% endblock %}
+
+{% block content %}
+
+<section class="form-shell wide donor-search-page">
+
+    <div class="directory-heading">
+        <span class="eyebrow">LIFELINK DONOR DIRECTORY</span>
+        <h1>Find the right <span>connection.</span></h1>
+        <p class="lead">
+            Search registered blood donors by blood group and city.
+            Every connection starts with a search.
+        </p>
+    </div>
+
+    <form method="get" class="search-card donor-search-form">
+
+        <label>
+            Required blood group
+            <select name="blood_group" required>
+                <option value="">Select blood group</option>
+                {% for group in blood_groups %}
+                <option value="{{ group }}"
+                    {% if selected_group == group %}selected{% endif %}>
+                    {{ group }}
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            City
+            <input
+                name="city"
+                value="{{ city }}"
+                required
+                placeholder="e.g. Bengaluru"
+            >
+        </label>
+
+        <button class="button search-submit" type="submit">
+            Search donors →
+        </button>
+
+    </form>
+
+    {% if searched %}
+
+    <div class="results-heading">
+        <div>
+            <span class="eyebrow">DIRECTORY RESULTS</span>
+            <h2>Matching donors</h2>
+        </div>
+        <span class="result-count">
+            {{ donors|length }} found
+        </span>
+    </div>
+
+    {% if donors %}
+
+    <div class="donor-list">
+
+        {% for donor in donors %}
+
+        <article class="donor-card">
+
+            <div class="donor-blood">
+                <span class="blood-badge">{{ donor.blood_group }}</span>
+            </div>
+
+            <div class="donor-info">
+                <h3>{{ donor.user.full_name }}</h3>
+                <p>
+                    <span class="location-dot">●</span>
+                    {{ donor.city }}
+                </p>
+            </div>
+
+            <div class="contact">
+                <span>CONTACT</span>
+                <strong>{{ donor.phone }}</strong>
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    <p class="fine-print donor-disclaimer">
+        Contact details are shown only because these donors explicitly
+        consented to sharing them. Confirm availability and eligibility
+        directly. Final screening and crossmatching must be performed
+        by a qualified blood bank.
+    </p>
+
+    {% else %}
+
+    <div class="empty-state">
+        <span>♡</span>
+        <h3>No matching donors found</h3>
+        <p>
+            There are currently no registered, available and consenting
+            compatible donors in {{ city }}.
+            Try another city or check again later.
+        </p>
+    </div>
+
+    {% endif %}
+    {% endif %}
+
+</section>
+
+{% endblock %}

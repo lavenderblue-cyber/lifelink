@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Admin Dashboard</h1>
+    <p>Overview of LifeLink activities.</p>
+
+    <h2>Blood Requests</h2>
+
+    {% if blood_requests %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Blood Group</th>
+                    <th>City</th>
+                    <th>Units</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for request in blood_requests %}
+                <tr>
+                    <td>{{ request.patient_name }}</td>
+                    <td>{{ request.blood_group }}</td>
+                    <td>{{ request.city }}</td>
+                    <td>{{ request.units }}</td>
+                    <td>{{ request.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No blood requests found.</p>
+    {% endif %}
+</div>
+{% endblock %}

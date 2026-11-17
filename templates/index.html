@@ -1,0 +1,258 @@
+
+{% extends "base.html" %}
+
+{% block title %}LifeLink — Connecting Lives{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+
+    <div class="hero-copy">
+
+        <p class="eyebrow">
+            ♥ &nbsp; COMMUNITY BLOOD DONOR NETWORK
+        </p>
+
+        <h1>
+            A little help.<br>
+            A <em>lifesaving</em> connection.
+        </h1>
+
+        <p class="lead">
+            Every drop counts. Find compatible blood donors in your city
+            or become part of a community that believes in helping others.
+        </p>
+
+        <div class="actions">
+            <a class="button" href="{{ url_for('find_donors') }}">
+                Find a donor &nbsp; →
+            </a>
+
+            <a class="button button-outline"
+               href="{{ url_for('register') }}">
+                Become a donor
+            </a>
+        </div>
+
+        <p class="fine-print">
+            A community built on voluntary blood donation.
+            Medical eligibility and compatibility must always be confirmed
+            by a qualified blood bank or healthcare professional.
+        </p>
+
+    </div>
+
+
+    <div class="hero-panel">
+
+        <div class="pulse">♥</div>
+
+        <p class="panel-kicker">MORE THAN A DONATION</p>
+
+        <h2>
+            Together, we can make a difference.
+        </h2>
+
+        <p>
+            Connecting people who need blood with registered donors
+            willing to help.
+        </p>
+
+        <div class="hero-decoration">
+            <span>♥</span>
+            <span>♥</span>
+            <span>♥</span>
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="feature-row">
+
+    <article>
+        <span>01 / DISCOVER</span>
+        <h3>Find donors nearby</h3>
+        <p>
+            Search registered donors by city and compatible blood group.
+        </p>
+    </article>
+
+    <article>
+        <span>02 / CONNECT</span>
+        <h3>Make a connection</h3>
+        <p>
+            Donors can review requests and choose whether to respond.
+        </p>
+    </article>
+
+    <article>
+        <span>03 / MAKE AN IMPACT</span>
+        <h3>Track donations</h3>
+        <p>
+            Keep track of blood requests, responses and completed donations.
+        </p>
+    </article>
+
+</section>
+
+<section class="community-board" id="community">
+
+    <div class="community-heading">
+        <div>
+            <p class="eyebrow">LIFELINK COMMUNITY</p>
+            <h2>Community Blood Board</h2>
+            <p>Every request, every connection, every life touched.</p>
+        </div>
+
+        <span class="community-live">● Live community activity</span>
+    </div>
+
+    <div class="community-grid">
+
+        <!-- RECENT REQUESTS -->
+        <article class="community-column">
+            <div class="community-column-heading">
+                <div>
+                    <span class="board-number">01</span>
+                    <h3>Recent Requests</h3>
+                </div>
+                <span class="board-count">{{ recent_requests|length }}</span>
+            </div>
+
+            {% if recent_requests %}
+                {% for item in recent_requests %}
+                <div class="board-item">
+                    <div class="board-item-top">
+                        <span class="board-blood">{{ item.blood_group }}</span>
+                        <span class="board-status">{{ item.status }}</span>
+                    </div>
+
+                    <h4>{{ item.city }}</h4>
+                    <p>{{ item.hospital_name }}</p>
+
+                    <div class="board-meta">
+                        <span>{{ item.units_required }} unit(s)</span>
+                        <span>{{ item.urgency }}</span>
+                    </div>
+
+                    <small>{{ item.created_at.strftime('%d %b, %I:%M %p') }}</small>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="board-empty">
+                    <span>♡</span>
+                    <p>No recent active requests.</p>
+                </div>
+            {% endif %}
+        </article>
+
+
+       <!-- SUCCESSFUL MATCHES -->
+<article class="community-column">
+    <div class="community-column-heading">
+        <div>
+            <span class="board-number">02</span>
+            <h3>Successful Matches</h3>
+        </div>
+        <span class="board-count">{{ successful_matches|length }}</span>
+    </div>
+
+    {% if successful_matches %}
+        {% for item, donor, donor_user in successful_matches %}
+        <div class="board-item">
+            <div class="board-item-top">
+                <span class="board-blood">{{ item.blood_group }}</span>
+                <span class="board-completed">✓ Matched</span>
+            </div>
+
+            <h4>{{ donor_user.full_name }}</h4>
+            <p>{{ item.city }} · {{ item.hospital_name }}</p>
+
+            <div class="board-meta">
+                <span>{{ item.units_required }} unit(s)</span>
+                <span>Donor accepted request</span>
+            </div>
+
+            <small>{{ item.created_at.strftime('%d %b %Y') }}</small>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="board-empty">
+            <span>♥</span>
+            <p>Every successful match will appear here.</p>
+        </div>
+    {% endif %}
+</article>
+
+
+        <!-- REGISTERED DONORS -->
+        <article class="community-column">
+            <div class="community-column-heading">
+                <div>
+                    <span class="board-number">03</span>
+                    <h3>Our Donors</h3>
+                </div>
+                <span class="board-count">{{ community_donors|length }}</span>
+            </div>
+
+            {% if community_donors %}
+                {% for donor, donor_user in community_donors %}
+                <div class="board-donor">
+                    <div class="donor-avatar">♥</div>
+
+                    <div class="board-donor-info">
+                        <h4>{{ donor_user.full_name }}</h4>
+                        <p>{{ donor.blood_group }} · {{ donor.city }}</p>
+                    </div>
+
+                    {% if donor.is_available %}
+                        <span class="donor-online">Available</span>
+                    {% else %}
+                        <span class="donor-offline">Unavailable</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="board-empty">
+                    <span>♡</span>
+                    <p>No registered donors yet.</p>
+                </div>
+            {% endif %}
+        </article>
+
+    </div>
+
+    <div class="community-footer">
+        <p>Be part of a community that makes a difference.</p>
+        <a href="{{ url_for('register') }}" class="button">
+            Join LifeLink →
+        </a>
+    </div>
+
+</section>
+<section class="successful-donations-section">
+    <div class="community-heading">
+        <p class="eyebrow">MAKING A DIFFERENCE</p>
+        <h2>Successful Donations</h2>
+        <p>Every completed donation represents a life-changing connection.</p>
+    </div>
+
+    <div class="community-grid">
+        {% for item, donor, donor_user in successful_donations %}
+        <div class="board-item">
+            <strong>♥ {{ item.blood_group }} Donation Completed</strong>
+            <p>Donor: {{ donor_user.full_name }}</p>
+            <p>City: {{ item.city }}</p>
+            <p>Hospital: {{ item.hospital_name }}</p>
+            <p>Units: {{ item.units_required }}</p>
+        </div>
+        {% else %}
+        <p>No completed donations to display yet.</p>
+        {% endfor %}
+    </div>
+</section>
+
+
+{% endblock %}
